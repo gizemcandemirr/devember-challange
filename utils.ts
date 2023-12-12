@@ -1,0 +1,1 @@
+const formatNumber = (val: number) => {};
