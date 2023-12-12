@@ -1,5 +1,5 @@
 # devember-challange
-Next 24 days everyday one project
+Next 24 days everyday one project. Projects will go from easy to difficult.
 
 # Day 1: FlatList and Expo Router in React Native with TypeScript
 
