@@ -26,7 +26,7 @@ export default function RootLayout() {
   }
   return (
     <Stack>
-      <Stack.Screen name="index" options={{ title: "Back" }} />
+      <Stack.Screen name="index" options={{ title: "Devember" }} />
     </Stack>
   );
 }
