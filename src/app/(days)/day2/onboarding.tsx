@@ -10,6 +10,20 @@ import React, { useState } from "react";
 import { Link, Stack, router } from "expo-router";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { StatusBar } from "expo-status-bar";
+import {
+  GestureDetector,
+  Gesture,
+  Directions,
+} from "react-native-gesture-handler";
+
+import Animated, {
+  FadeIn,
+  FadeOut,
+  BounceInRight,
+  SlideOutLeft,
+  BounceOutLeft,
+  SlideInRight,
+} from "react-native-reanimated";
 
 const onboardingSteps = [
   {
@@ -24,7 +38,7 @@ const onboardingSteps = [
       "Learn React Native and build a community with other developers.",
   },
   {
-    icon: "people-arrows",
+    icon: "school",
     title: "Education for Children",
     description:
       "Contribute to  the fundraiser Education for Children to help Save the Children.",
@@ -43,46 +57,83 @@ export default function OnboardingScreen() {
       setScreenIndex(screenIndex + 1);
     }
   };
-  const onSkip = () => {
+
+  const onBack = () => {
+    const isFirstScreen = screenIndex === 0;
+    if (isFirstScreen) {
+      endOnboarding();
+    } else {
+      setScreenIndex(screenIndex - 1);
+    }
+  };
+
+  const endOnboarding = () => {
     setScreenIndex(0);
     router.back();
   };
+
+  const swipes = Gesture.Simultaneous(
+    Gesture.Fling().direction(Directions.LEFT).onEnd(onContinue),
+    Gesture.Fling().direction(Directions.RIGHT).onEnd(onBack)
+  );
+
   return (
     <SafeAreaView style={styles.page}>
       <Stack.Screen
         options={{ headerShown: false, title: "Day 2: Onboarding" }}
       />
       <StatusBar style="light" />
-      <View style={styles.pageContent}>
-        <View style={styles.stepIndicatorContainer}>
-          {onboardingSteps.map((step, index) => (
-            <View
-              style={[
-                styles.stepIndicator,
-                { backgroundColor: index === screenIndex ? "#CEF202" : "gray" },
-              ]}
-            ></View>
-          ))}
-        </View>
-        <FontAwesome5
-          name={data.icon}
-          size={100}
-          color="#CEF202"
-          style={styles.image}
-        />
-        <View style={styles.footer}>
-          <Text style={styles.title}>{data.title}</Text>
-          <Text style={styles.description}>{data.description}</Text>
-          <View style={styles.buttonRow}>
-            <Text style={styles.buttonText} onPress={onSkip}>
-              Skip
-            </Text>
-            <Pressable onPress={() => onContinue()} style={styles.button}>
-              <Text style={styles.buttonText}>Continue</Text>
-            </Pressable>
+      <GestureDetector gesture={swipes}>
+          <View style={styles.pageContent}>
+          <Animated.View style={styles.pageAnimateCpntent} entering={FadeIn} exiting={FadeOut} key={screenIndex}>
+            <View style={styles.stepIndicatorContainer}>
+              {onboardingSteps.map((step, index) => (
+                <View
+                  style={[
+                    styles.stepIndicator,
+                    {
+                      backgroundColor:
+                        index === screenIndex ? "#CEF202" : "gray",
+                    },
+                  ]}
+                ></View>
+              ))}
+            </View>
+
+            <FontAwesome5
+              name={data.icon}
+              size={100}
+              color="#CEF202"
+              style={styles.image}
+            />
+
+            <View style={styles.footer}>
+              <Animated.Text
+                entering={SlideInRight}
+                exiting={SlideOutLeft}
+                style={styles.title}
+              >
+                {data.title}
+              </Animated.Text>
+              <Animated.Text
+                entering={SlideInRight.delay(50)}
+                exiting={SlideOutLeft}
+                style={styles.description}
+              >
+                {data.description}
+              </Animated.Text>
+              <View style={styles.buttonRow}>
+                <Text style={styles.buttonText} onPress={endOnboarding}>
+                  Skip
+                </Text>
+                <Pressable onPress={() => onContinue()} style={styles.button}>
+                  <Text style={styles.buttonText}>Continue</Text>
+                </Pressable>
+              </View>
+            </View>
+            </Animated.View>
           </View>
-        </View>
-      </View>
+      </GestureDetector>
     </SafeAreaView>
   );
 }
@@ -94,6 +145,9 @@ const styles = StyleSheet.create({
   },
   pageContent: {
     padding: 20,
+    flex: 1,
+  },
+  pageAnimateCpntent: {
     flex: 1,
   },
   image: {
@@ -139,7 +193,7 @@ const styles = StyleSheet.create({
   },
   stepIndicatorContainer: {
     flexDirection: "row",
-    gap:8,
+    gap: 8,
     paddingHorizontal: 10,
   },
   stepIndicator: {
