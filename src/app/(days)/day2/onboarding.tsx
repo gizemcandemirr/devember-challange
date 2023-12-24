@@ -9,6 +9,7 @@ import {
 import React, { useState } from "react";
 import { Link, Stack, router } from "expo-router";
 import { FontAwesome5 } from "@expo/vector-icons";
+import { StatusBar } from "expo-status-bar";
 
 const onboardingSteps = [
   {
@@ -51,7 +52,18 @@ export default function OnboardingScreen() {
       <Stack.Screen
         options={{ headerShown: false, title: "Day 2: Onboarding" }}
       />
+      <StatusBar style="light" />
       <View style={styles.pageContent}>
+        <View style={styles.stepIndicatorContainer}>
+          {onboardingSteps.map((step, index) => (
+            <View
+              style={[
+                styles.stepIndicator,
+                { backgroundColor: index === screenIndex ? "#CEF202" : "gray" },
+              ]}
+            ></View>
+          ))}
+        </View>
         <FontAwesome5
           name={data.icon}
           size={100}
@@ -87,6 +99,7 @@ const styles = StyleSheet.create({
   image: {
     alignSelf: "center",
     marginBottom: 20,
+    marginTop: 50,
   },
   title: {
     color: "#fdfdfd",
@@ -123,5 +136,16 @@ const styles = StyleSheet.create({
   },
   footer: {
     marginTop: "auto",
+  },
+  stepIndicatorContainer: {
+    flexDirection: "row",
+    gap:8,
+    paddingHorizontal: 10,
+  },
+  stepIndicator: {
+    flex: 1,
+    backgroundColor: "gray",
+    height: 3,
+    borderRadius: 10,
   },
 });
